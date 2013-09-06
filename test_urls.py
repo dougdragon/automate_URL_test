@@ -13,7 +13,7 @@ def main():
         log = open('logging.txt', 'a')
     except IOError:
         log = open('logging.txt', 'w')
-    print "Reading the URLs from the wsdls.txt file..."
+    print "Reading the URLs from the urls.txt file..."
     try:
         for line in open('urls.txt', 'r').readlines():
             urls.append(line.strip())
