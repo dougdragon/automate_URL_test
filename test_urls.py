@@ -16,7 +16,9 @@ def main():
     print "Reading the URLs from the wsdls.txt file..."
     try:
         for line in open('urls.txt', 'r').readlines():
-            urls.append(line.strip())
+            li = line.strip()
+            if not li.startswith("#"):
+                urls.append(line.strip())
 
         print "Done."
         print "Hitting the URLs now:"
