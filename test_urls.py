@@ -1,10 +1,11 @@
 import urllib2
 from urllib2 import URLError
-from datetime import datetime as time
+from datetime import datetime
+import time
 
 
 def main():
-    begin = time.now()
+    begin = datetime.now()
     urls = []
     failed_urls = []
     total_count = 0
@@ -16,7 +17,7 @@ def main():
         log = open('logging.txt', 'w')
     print "Reading the URLS from the wsdls.txt file..."
     try:
-        for line in open('wsdls.txt', 'r').readlines():
+        for line in open('urls.txt', 'r').readlines():
             li = line.strip()
             if not li.startswith("#"):
                 urls.append(line.strip())
@@ -24,25 +25,32 @@ def main():
         print "Hitting the WSDL URLs now:"
         log.writelines('------------------------------------------------------'
                        '-------------------------------------------------\r\n')
-
         for url in urls:
             try:
                 r = urllib2.urlopen(url)
                 passed_count += 1
             except URLError, e:
-                failed_count += 1
-                failed_urls.append(url)
-                log.writelines("%s - FAILED: %s.\r\n" % (str(time.now()), url))
-                log.writelines("Error code: %s \r\n" % e.code)
-                print ""
-                print "Failed:"
-                print "-------"
-                print ""
-                print "URL: %s" % url
-                print "URL returned %s." % e.code  # urllib
-                print ""
+                print "%s failed (%s). Retrying in 10 seconds..." % (url, e.code)
+                time.sleep(10)
+                try:
+                    r = urllib2.urlopen(url)
+                    passed_count += 1
+                    print "%s passed on second hit" % url
+                except URLError, e:
+                    print "%s failed again after a 10 second timeout" % url
+                    failed_count += 1
+                    failed_urls.append(url)
+                    log.writelines("%s - FAILED: %s.\r\n" % (str(datetime.now()), url))
+                    log.writelines("Error code: %s \r\n" % e.code)
+                    print ""
+                    print "Failed:"
+                    print "-------"
+                    print ""
+                    print "URL: %s" % url
+                    print "URL returned %s." % e.code
+                    print ""
 
-        end = time.now()
+        end = datetime.now()
         total_count = failed_count + passed_count
 
         log.writelines('                  ------------- Summary ---------\r\n')
@@ -69,7 +77,7 @@ def main():
     except IOError:
         print "IOError: Could not locate 'wsdls.txt' file."
         log.writelines("\r\n%s - IOError: Could not locate 'wsdls.txt' file."
-                       % (str(time.now())))
+                       % (str(datetime.now())))
 
 if __name__ == "__main__":
     main()
