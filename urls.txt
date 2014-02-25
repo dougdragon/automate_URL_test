@@ -2,4 +2,6 @@ http://count.io/vb/fruit/apples
 http://count.io/vb/fruit/bananas
 http://count.io/vb/fruit/oranges
 http://count.io/vb/fruit/grapes
+http://the-internet.herokuapp.com/status_codes/200
 http://www.google.com/demoa404
+http://the-internet.herokuapp.com/status_codes/404
