@@ -15,14 +15,14 @@ def main():
         log = open('logging.txt', 'a')
     except IOError:
         log = open('logging.txt', 'w')
-    print "Reading the URLS from the wsdls.txt file..."
+    print "Reading the URLS from the urls.txt file..."
     try:
         for line in open('urls.txt', 'r').readlines():
             li = line.strip()
             if not li.startswith("#"):
                 urls.append(line.strip())
         print "Done."
-        print "Hitting the WSDL URLs now:"
+        print "Hitting the URLs now:"
         log.writelines('------------------------------------------------------'
                        '-------------------------------------------------\r\n')
         for url in urls:
@@ -76,7 +76,7 @@ def main():
 
     except IOError:
         print "IOError: Could not locate 'wsdls.txt' file."
-        log.writelines("\r\n%s - IOError: Could not locate 'wsdls.txt' file."
+        log.writelines("\r\n%s - IOError: Could not locate 'urls.txt' file."
                        % (str(datetime.now())))
 
 if __name__ == "__main__":
