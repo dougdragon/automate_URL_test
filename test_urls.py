@@ -75,7 +75,7 @@ def main():
         print "Test time: %s." % (end - begin)
 
     except IOError:
-        print "IOError: Could not locate 'wsdls.txt' file."
+        print "IOError: Could not locate 'urls.txt' file."
         log.writelines("\r\n%s - IOError: Could not locate 'urls.txt' file."
                        % (str(datetime.now())))
 
