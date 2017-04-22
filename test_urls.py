@@ -1,10 +1,10 @@
-import urllib2
-from urllib2 import URLError
+"""Simple module to hit a list of URLs."""
+import requests
 from datetime import datetime
-import time
 
 
 def main():
+    """The main function that does all the work."""
     begin = datetime.now()
     urls = []
     failed_urls = []
@@ -15,40 +15,30 @@ def main():
         log = open('logging.txt', 'a')
     except IOError:
         log = open('logging.txt', 'w')
-    print "Reading the URLS from the urls.txt file..."
+    print("Reading the URLS from the urls.txt file...")
     try:
         for line in open('urls.txt', 'r').readlines():
             li = line.strip()
             if not li.startswith("#"):
                 urls.append(line.strip())
-        print "Done."
-        print "Hitting the URLs now:"
+        print("Done.")
+        print("Hitting the URLs now:")
         log.writelines('------------------------------------------------------'
                        '-------------------------------------------------\r\n')
         for url in urls:
-            try:
-                r = urllib2.urlopen(url)
+            r = requests.head(url=url)
+            if r.status_code == 200:
                 passed_count += 1
-            except URLError, e:
-                print "%s failed (%s). Retrying in 10 seconds..." % (url, e.code)
-                time.sleep(10)
-                try:
-                    r = urllib2.urlopen(url)
-                    passed_count += 1
-                    print "%s passed on second hit" % url
-                except URLError, e:
-                    print "%s failed again after a 10 second timeout" % url
-                    failed_count += 1
-                    failed_urls.append(url)
-                    log.writelines("%s - FAILED: %s.\r\n" % (str(datetime.now()), url))
-                    log.writelines("Error code: %s \r\n" % e.code)
-                    print ""
-                    print "Failed:"
-                    print "-------"
-                    print ""
-                    print "URL: %s" % url
-                    print "URL returned %s." % e.code
-                    print ""
+            else:
+                failed_count += 1
+                failed_urls.append(url)
+                log.writelines("%s - FAILED: %s.\r\n" % (
+                    str(datetime.now()), url))
+                log.writelines("Error code: %s \r\n" % r.status_code)
+                print("Failed:")
+                print("-------")
+                print("URL: {}".format(url))
+                print("URL returned {}".format(r.status_code))
 
         end = datetime.now()
         total_count = failed_count + passed_count
@@ -60,24 +50,21 @@ def main():
         log.writelines('-----------------------------------------------------'
                        '-------------------------------------------------\r\n')
 
-        print ""
-        print "---------------------------------------"
-        print "Total URLs tested: %s." % total_count
-        print "Passed URLs: %s." % passed_count
-        print "Failed URLs: %s." % failed_count
-        print ""
-        print "Failed URLs:"
-        print "============="
+        print("---------------------------------------")
+        print("Total URLs tested: {}.".format(total_count))
+        print("Passed URLs: {}.".format(passed_count))
+        print("Failed URLs: {}.".format(failed_count))
+        print("Failed URLs:")
+        print("=============")
         for url in failed_urls:
-            print url
-        print "---------------------------------------"
-        print ""
-        print "Test time: %s." % (end - begin)
+            print(url)
+        print("---------------------------------------")
+        print("Test time: {}.".format(end - begin))
 
     except IOError:
-        print "IOError: Could not locate 'urls.txt' file."
-        log.writelines("\r\n%s - IOError: Could not locate 'urls.txt' file."
-                       % (str(datetime.now())))
+        print("IOError: Could not locate 'urls.txt' file.")
+        log.writelines("\r\n{} - IOError: Could not locate 'urls.txt'"
+                       " file.".format(str(datetime.now())))
 
 if __name__ == "__main__":
     main()
